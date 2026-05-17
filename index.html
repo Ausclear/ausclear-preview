@@ -1323,8 +1323,8 @@ body {
             </div>
             <div class="form-group">
               <label class="form-label" for="mobile">Phone (Optional)</label>
-              <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="0412 345 678 or 08 8123 4567" autocomplete="tel">
-              <div class="help-text">Australian mobile or landline number (e.g. 0412 345 678 or 08 8123 4567).</div>
+              <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="Australian mobile or landline" autocomplete="tel">
+              <div class="help-text">Must be a valid Australian mobile or landline.</div>
             </div>
           </div>
           <div class="form-row">
@@ -1620,7 +1620,7 @@ function validateForm() {
     if (hasPlus && cm.indexOf('61') === 0) { cm = '0' + cm.substring(2); }
     else if (cm.indexOf('61') === 0 && cm.length === 11) { cm = '0' + cm.substring(2); }
     if (cm.length !== 10 || !['02','03','04','07','08'].includes(cm.substring(0, 2))) {
-      alert('Please enter a valid Australian phone number (mobile or landline). Examples: 0412 345 678 or 08 8123 4567');
+      alert('Must be a valid Australian mobile or landline');
       mobileInput.focus(); return false;
     }
   }

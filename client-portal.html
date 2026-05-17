@@ -1535,13 +1535,13 @@ body.modal-open { overflow: hidden; }
           </div>
           <div class="form-group">
             <label class="form-label" for="mobile">Phone (Optional)</label>
-            <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="0412 345 678 or 08 8123 4567" autocomplete="tel">
+            <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="Australian mobile or landline" autocomplete="tel">
             <div id="mobileValidation" class="validation-message" style="display: none;">
               <i class="fas fa-check-circle validation-icon" id="mobileCheck" style="display: none;"></i>
               <i class="fas fa-exclamation-circle validation-icon" id="mobileError" style="display: none;"></i>
               <span id="mobileText"></span>
             </div>
-            <div class="help-text">Australian mobile or landline number (e.g. 0412 345 678 or 08 8123 4567).</div>
+            <div class="help-text">Must be a valid Australian mobile or landline.</div>
           </div>
         </div>
 
@@ -1753,9 +1753,9 @@ class MobileValidator {
     let digits = raw.replace(/\D/g, '');
     if (hasPlus && digits.indexOf('61') === 0) { digits = '0' + digits.substring(2); }
     else if (digits.indexOf('61') === 0 && digits.length === 11) { digits = '0' + digits.substring(2); }
-    if (digits.length !== 10) return { isValid: false, message: 'Phone number must be 10 digits' };
+    if (digits.length !== 10) return { isValid: false, message: 'Must be a valid Australian mobile or landline' };
     if (!['02','03','04','07','08'].includes(digits.substring(0, 2))) {
-      return { isValid: false, message: 'Please enter a valid Australian phone number (mobile or landline)' };
+      return { isValid: false, message: 'Must be a valid Australian mobile or landline' };
     }
     return { isValid: true, message: '' };
   }
@@ -1936,7 +1936,7 @@ function validateForm() {
   if (emailInput.classList.contains('invalid')) { alert('Please enter a valid email address'); emailInput.focus(); return false; }
   const mob = mobileInput.value.trim();
   if (mob && (mobileInput.classList.contains('invalid') || !mobileInput.classList.contains('valid'))) {
-    alert('Please enter a valid Australian phone number (mobile or landline)');
+    alert('Must be a valid Australian mobile or landline');
     mobileInput.focus(); return false;
   }
   if (securityEnquiry && securityEnquiry.checked) {

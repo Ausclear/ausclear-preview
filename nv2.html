@@ -1515,13 +1515,13 @@ ul.content-list li::before {
 
           <div class="form-group">
             <label class="form-label" for="mobile">Phone (Optional)</label>
-            <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="0412 345 678 or 08 8123 4567" autocomplete="tel">
+            <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="Australian mobile or landline" autocomplete="tel">
             <div id="mobileValidation" class="validation-message" style="display: none;">
               <i class="fas fa-check-circle validation-icon" id="mobileCheck" style="display: none;"></i>
               <i class="fas fa-exclamation-circle validation-icon" id="mobileError" style="display: none;"></i>
               <span id="mobileText"></span>
             </div>
-            <div class="help-text">Australian mobile or landline number (e.g. 0412 345 678 or 08 8123 4567).</div>
+            <div class="help-text">Must be a valid Australian mobile or landline.</div>
           </div>
         </div>
 
@@ -1720,9 +1720,9 @@ digits = '0' + digits.substring(2);
 }
 let result;
 if (digits.length !== 10) {
-result = { isValid: false, message: 'Phone number must be 10 digits' };
+result = { isValid: false, message: 'Must be a valid Australian mobile or landline' };
 } else if (['02','03','04','07','08'].indexOf(digits.substring(0, 2)) === -1) {
-result = { isValid: false, message: 'Please enter a valid Australian phone number (mobile or landline)' };
+result = { isValid: false, message: 'Must be a valid Australian mobile or landline' };
 } else {
 result = { isValid: true, message: '' };
 }
@@ -1970,7 +1970,7 @@ return result;
 
     const mobileValue = mobileInput.value.trim();
     if (mobileValue && (mobileInput.classList.contains('invalid') || !mobileInput.classList.contains('valid'))) {
-      alert('Please enter a valid Australian phone number (mobile or landline)');
+      alert('Must be a valid Australian mobile or landline');
       mobileInput.focus();
       return false;
     }
