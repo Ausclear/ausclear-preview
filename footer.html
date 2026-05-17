@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AusClear Footer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --bg: #07070a;
+  --bg-2: #0d0d12;
+  --surface: #14141a;
+  --surface-2: #1a1a22;
+  --surface-3: #202028;
+
+  --gold: #c9a84c;
+  --gold-soft: #d9bf6f;
+  --gold-deep: #a4862c;
+  --gold-bright: #e6cc7a;
+
+  --ivory: #f5f1e6;
+  --text: #ebe6d6;
+  --muted: #8a8a96;
+  --muted-2: #a8a8b4;
+
+  --line: rgba(201,168,76,0.16);
+  --line-strong: rgba(201,168,76,0.32);
+  --line-subtle: rgba(255,255,255,0.06);
+
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ========== FOOTER ========== */
+.site-footer {
+  position: relative;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg,
+    var(--gold-deep) 0%,
+    var(--gold) 25%,
+    var(--gold-bright) 50%,
+    var(--gold) 75%,
+    var(--gold-deep) 100%);
+  background-size: 200% 100%;
+  animation: shimmerSweep 4s ease-in-out infinite;
+  z-index: 3;
+  box-shadow: 0 0 20px rgba(201,168,76,0.4);
+}
+
+@keyframes shimmerSweep {
+  0%, 100% { background-position: 0% 50%; opacity: 0.85; }
+  50% { background-position: 100% 50%; opacity: 1; }
+}
+
+.site-footer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 80% at 0% 0%, rgba(201,168,76,0.1), transparent 60%),
+    radial-gradient(ellipse 50% 60% at 100% 100%, rgba(201,168,76,0.08), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowBreathe 8s ease-in-out infinite;
+}
+
+@keyframes glowBreathe {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.footer-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 56px 28px 0;
+}
+
+/* === Primary row: brand | links | contact === */
+.footer-primary {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 56px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--line-subtle);
+}
+
+/* Brand */
+.footer-brand .brand-mark {
+  display: inline-block;
+  margin-bottom: 10px;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.footer-brand .brand-logo {
+  height: 56px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 16px rgba(201,168,76,0.25));
+  transition: filter 0.4s ease, transform 0.4s ease;
+}
+
+.footer-brand .brand-mark:hover .brand-logo {
+  filter: drop-shadow(0 2px 22px rgba(201,168,76,0.5));
+  transform: scale(1.02);
+}
+
+.footer-brand .tagline {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+}
+
+.footer-brand p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--muted-2);
+  max-width: 320px;
+  margin-bottom: 20px;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--gold);
+  border-radius: 10px;
+  font-size: 18px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(201, 168, 76, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-socials a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, var(--gold), var(--gold-deep));
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.footer-socials a:hover::before {
+  left: 0;
+}
+
+.footer-socials a:hover {
+  color: var(--bg);
+  transform: translateY(-3px) rotate(3deg);
+  box-shadow: 0 8px 25px rgba(201, 168, 76, 0.4);
+  border-color: var(--gold);
+}
+
+/* Column heads */
+.footer-col h3 {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  position: relative;
+  padding-bottom: 12px;
+  display: inline-block;
+}
+
+.footer-col h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  transition: width 0.5s cubic-bezier(.2,.7,.2,1);
+}
+
+.footer-col:hover h3::after {
+  width: 100%;
+}
+
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-col a {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: all 0.3s cubic-bezier(.2,.7,.2,1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  width: fit-content;
+  padding: 4px 8px 4px 0;
+  border-left: 2px solid transparent;
+  padding-left: 12px;
+  margin-left: -12px;
+  border-radius: 0 4px 4px 0;
+}
+
+.footer-col a::before {
+  content: '→';
+  color: var(--gold);
+  font-weight: 600;
+  width: 0;
+  opacity: 0;
+  margin-right: 0;
+  transform: translateX(-6px);
+  transition: all 0.3s cubic-bezier(.2,.7,.2,1);
+  display: inline-block;
+}
+
+.footer-col a:hover {
+  color: var(--gold-bright);
+  background: rgba(201,168,76,0.06);
+  border-left-color: var(--gold);
+  transform: translateX(4px);
+}
+
+.footer-col a:hover::before {
+  width: 14px;
+  opacity: 1;
+  margin-right: 6px;
+  transform: translateX(0);
+}
+
+/* Contact column - keeps its icon, hides the arrow */
+.footer-col.contact a::before {
+  display: none;
+}
+
+.footer-col.contact a {
+  color: var(--text);
+}
+
+.footer-col.contact a i {
+  color: var(--gold);
+  font-size: 12px;
+  width: 16px;
+  text-align: center;
+  margin-right: 6px;
+  transition: transform 0.3s;
+}
+
+.footer-col.contact a:hover i {
+  transform: scale(1.15);
+  color: var(--gold-bright);
+}
+
+.footer-col.contact .meta {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer-col.contact .meta strong {
+  color: var(--text);
+  font-weight: 500;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* === Bottom strip === */
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 22px 0 26px;
+  flex-wrap: wrap;
+}
+
+.footer-legal {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.footer-legal .copyright {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.footer-legal .disclaimer {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+}
+
+.footer-bottom-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.back-to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 10px 20px;
+  border: 2px solid var(--gold);
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.back-to-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: var(--gold);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.back-to-top:hover::before {
+  left: 0;
+}
+
+.back-to-top:hover {
+  color: var(--bg);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(201, 168, 76, 0.3);
+}
+
+.back-to-top:hover i {
+  color: var(--bg);
+}
+
+.back-to-top i {
+  transition: transform 0.3s ease, color 0.3s ease;
+  color: var(--gold);
+}
+
+.back-to-top:hover i {
+  transform: translateY(-1px);
+}
+
+/* === Responsive === */
+@media (max-width: 1024px) {
+  .footer-primary {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px 32px;
+  }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-brand p { max-width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .footer-inner { padding: 48px 20px 0; }
+
+  .footer-brand .brand-logo { height: 48px; }
+
+  .footer-primary {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-bottom: 32px;
+  }
+
+  .footer-acknowledgement {
+    flex-direction: column;
+    text-align: center;
+    gap: 12px;
+    padding: 22px 0;
+  }
+
+  .footer-bottom {
+    flex-direction: column-reverse;
+    text-align: center;
+    gap: 18px;
+    padding: 22px 0 28px;
+  }
+
+  .footer-legal { text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== FOOTER ========== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+
+    <div class="footer-primary">
+
+      <!-- Brand block -->
+      <div class="footer-brand">
+        <a href="https://www.ausclear.com.au" class="brand-mark" aria-label="AusClear">
+          <img src="https://ausclear.au/AusClear-Dark-Transparent.png" alt="AusClear" class="brand-logo">
+        </a>
+        <div class="tagline">Accredited DISP Sponsor</div>
+        <p>Specialists in Australian Government security clearance sponsorship — Baseline, NV1 and NV2 — guiding individuals and organisations through the AGSVA process.</p>
+        <div class="footer-socials">
+          <a href="https://x.com/AusClear" target="_blank" rel="noopener noreferrer" aria-label="X" title="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+          <a href="https://www.linkedin.com/company/ausclear" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.instagram.com/ausclear" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick links -->
+      <div class="footer-col">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="https://www.ausclear.com.au/about">About</a></li>
+          <li><a href="https://www.ausclear.com.au/services">Services</a></li>
+          <li><a href="https://www.ausclear.com.au/faq">FAQ</a></li>
+          <li><a href="https://support.ausclear.au" target="_blank" rel="noopener noreferrer">Knowledge Base</a></li>
+        </ul>
+      </div>
+
+      <!-- Legal -->
+      <div class="footer-col">
+        <h3>Legal</h3>
+        <ul>
+          <li><a href="https://www.ausclear.com.au/privacy-policy">Privacy Policy</a></li>
+          <li><a href="https://www.ausclear.com.au/terms-and-conditions">Terms &amp; Conditions</a></li>
+          <li><a href="https://www.ausclear.com.au/copyright">Copyright Notice</a></li>
+          <li><a href="https://support.ausclear.com.au/portal/en/kb/articles/ausclear-transparency-statement-ai-assisted-operations" target="_blank" rel="noopener noreferrer">AI Transparency</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-col contact">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="mailto:support@ausclear.com.au?subject=Security%20Clearance%20Enquiry"><i class="fas fa-envelope"></i> support@ausclear.com.au</a></li>
+          <li><a href="tel:1300027423"><i class="fas fa-phone"></i> 1300 027 423</a></li>
+        </ul>
+        <div class="meta">
+          <strong>Mon – Fri · 9am – 5pm ACST</strong>
+          Woodside SA 5244, Australia
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom strip -->
+    <div class="footer-bottom">
+      <div class="footer-legal">
+        <span class="copyright">© 2026 Nephthys Pty Ltd t/as AusClear · ABN 70 628 031 587</span>
+        <span class="disclaimer">Not affiliated with AGSVA, Defence, or the Australian Government. Unauthorised reproduction or AI training use prohibited.</span>
+      </div>
+      <div class="footer-bottom-right">
+        <a href="#" class="back-to-top">
+          <i class="fas fa-arrow-up"></i>
+          Back to top
+        </a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.back-to-top').addEventListener('click', function(e) {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+
+</body>
+</html>
