@@ -1701,11 +1701,11 @@ ul.content-list li::before {
   }
 
   class MobileValidator {
-constructor() {
-this.cache = {};
-}
+    constructor() {
+      this.cache = {};
+    }
 
-validateMobile(input) {
+    validateMobile(input) {
 if (input == null) input = '';
 const raw = String(input).trim();
 if (raw === '') {
@@ -1729,12 +1729,18 @@ result = { isValid: true, message: '' };
 this.cache[input] = result;
 return result;
 }
-}
+  }
 
-  // ===== INITIALISE VALIDATORS & DOM REFS =====
+  // ===== INITIALISE VALIDATORS =====
   const emailValidator = new EmailValidator();
   const mobileValidator = new MobileValidator();
 
+  // ===== DOM ELEMENTS =====
+  const modal = document.getElementById('contactModal');
+  const thankYouModal = document.getElementById('thankYouModal');
+  const closeModalBtn = document.getElementById('closeModal');
+  const closeThankYouBtn = document.getElementById('closeThankYou');
+  const thankYouCloseBtn = document.getElementById('thankYouClose');
   const form = document.getElementById('contactForm');
   const submitBtn = document.getElementById('submitBtn');
   const resetBtn = document.getElementById('resetBtn');
@@ -1745,52 +1751,123 @@ return result;
   const clearanceTypeGroup = document.getElementById('clearanceTypeGroup');
   const clearanceRadios = document.querySelectorAll('.clearance-radio');
   const messageField = document.getElementById('message');
-  const thankYouModal = document.getElementById('thankYouModal');
   const progressContainer = document.getElementById('progressContainer');
   const progressBar = document.getElementById('progressBar');
   const progressText = document.getElementById('progressText');
 
-  let emailTimeout;
+  let emailTimeout, mobileTimeout;
 
-  // ===== VALIDATION DISPLAY =====
+  // ===== MODAL FUNCTIONS =====
+  function openModal() {
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    resetForm();
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  function closeThankYouModal() {
+    thankYouModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+  }
+
+  function capitaliseSentences(text) {
+    return text.replace(/(^\w|[.!?]\s*\w)/g, match => match.toUpperCase());
+  }
+
+  function resetForm() {
+    if (form) form.reset();
+
+    ['firstName', 'lastName', 'email', 'mobile', 'message'].forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.value = '';
+    });
+
+    ['state', 'leadSource'].forEach(id => {
+      const field = document.getElementById(id);
+      if (field) field.selectedIndex = 0;
+    });
+
+    clearanceRadios.forEach(radio => radio.checked = false);
+
+    if (generalEnquiry) generalEnquiry.checked = false;
+    if (securityEnquiry) securityEnquiry.checked = false;
+
+    if (clearanceTypeGroup) {
+      clearanceTypeGroup.classList.add('hidden');
+      clearanceTypeGroup.classList.remove('show');
+    }
+    clearanceRadios.forEach(radio => radio.required = false);
+
+    resetEmailValidation();
+    resetMobileValidation();
+  updateSubmitButton();
+  }
+
+  function resetEmailValidation() {
+    document.getElementById('emailValidation').style.display = 'none';
+    emailInput.classList.remove('valid', 'invalid');
+    ['emailSpinner', 'emailCheck', 'emailError'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+    document.getElementById('emailText').textContent = '';
+  }
+
+  function resetMobileValidation() {
+    document.getElementById('mobileValidation').style.display = 'none';
+    mobileInput.classList.remove('valid', 'invalid');
+    ['mobileCheck', 'mobileError'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+    document.getElementById('mobileText').textContent = '';
+  }
+
   function showEmailValidation(type, message) {
     const validation = document.getElementById('emailValidation');
-    if (!validation) return;
     const spinner = document.getElementById('emailSpinner');
     const check = document.getElementById('emailCheck');
     const error = document.getElementById('emailError');
     const text = document.getElementById('emailText');
 
-    [spinner, check, error].forEach(el => el && (el.style.display = 'none'));
+    [spinner, check, error].forEach(el => el.style.display = 'none');
     validation.className = 'validation-message';
     emailInput.classList.remove('valid', 'invalid', 'checking');
 
     if (type === 'checking') {
-      validation.classList.add('checking'); validation.style.display = 'flex';
-      if (spinner) spinner.style.display = 'inline'; emailInput.classList.add('checking');
-      if (text) text.textContent = message || 'Checking email...';
+      validation.classList.add('checking');
+      validation.style.display = 'flex';
+      spinner.style.display = 'inline';
+      emailInput.classList.add('checking');
+      text.textContent = message || 'Checking email…';
     } else if (type === 'valid') {
-      validation.classList.add('valid'); validation.style.display = 'flex';
-      if (check) check.style.display = 'inline'; emailInput.classList.add('valid');
-      if (text) text.textContent = message || 'Email verified';
+      validation.classList.add('valid');
+      validation.style.display = 'flex';
+      check.style.display = 'inline';
+      emailInput.classList.add('valid');
+      text.textContent = message || 'Email verified';
     } else if (type === 'invalid') {
-      validation.classList.add('invalid'); validation.style.display = 'flex';
-      if (error) error.style.display = 'inline'; emailInput.classList.add('invalid');
-      if (text) text.textContent = message || 'Invalid email';
+      validation.classList.add('invalid');
+      validation.style.display = 'flex';
+      error.style.display = 'inline';
+      emailInput.classList.add('invalid');
+      text.textContent = message || 'Invalid email';
     } else {
       validation.style.display = 'none';
     }
+
     updateSubmitButton();
   }
 
   function showMobileValidation(type, message) {
     const validation = document.getElementById('mobileValidation');
-    if (!validation) return;
     const check = document.getElementById('mobileCheck');
     const error = document.getElementById('mobileError');
     const text = document.getElementById('mobileText');
 
-    [check, error].forEach(el => el && (el.style.display = 'none'));
+    [check, error].forEach(el => el.style.display = 'none');
     validation.className = 'validation-message';
     mobileInput.classList.remove('valid', 'invalid');
 
@@ -1798,22 +1875,24 @@ return result;
       mobileInput.classList.add('valid');
       validation.style.display = 'none';
     } else if (type === 'invalid') {
-      validation.classList.add('invalid'); validation.style.display = 'flex';
-      if (error) error.style.display = 'inline';
+      validation.classList.add('invalid');
+      validation.style.display = 'flex';
+      error.style.display = 'inline';
       mobileInput.classList.add('invalid');
-      if (text) text.textContent = message || 'Invalid phone number';
+      text.textContent = message || 'Invalid mobile number';
     } else {
       validation.style.display = 'none';
     }
+
     updateSubmitButton();
   }
 
   function updateSubmitButton() {
-    const isEmailValid = emailInput && emailInput.classList.contains('valid');
-    const mobileVal = mobileInput && mobileInput.value.trim();
-    const isMobileValid = !mobileVal || mobileInput.classList.contains('valid');
-    if (submitBtn) submitBtn.disabled = !(isEmailValid && isMobileValid);
-  }
+    const isEmailValid = emailInput.classList.contains('valid');
+    const mobileValue = mobileInput.value.trim();
+    const isMobileValid = !mobileValue || mobileInput.classList.contains('valid');
+  submitBtn.disabled = !(isEmailValid && isMobileValid);
+}
 
   async function validateEmail() {
     const email = emailInput.value.trim();
@@ -1846,11 +1925,173 @@ return result;
   }
 
   function formatMobileInput(event) {
-    // Allow digits, spaces, dashes, brackets, plus, dots - strip everything else
-    let value = event.target.value.replace(/[^\d\s+()\-.]/g, '');
-    if (value.length > 20) value = value.substring(0, 20);
+    let value = event.target.value.replace(/\D/g, '');
+    if (value.length > 10) value = value.substring(0, 10);
     event.target.value = value;
     validateMobile();
+  }
+
+  function toggleClearanceType() {
+    if (securityEnquiry && securityEnquiry.checked) {
+      clearanceTypeGroup.classList.remove('hidden');
+      clearanceTypeGroup.classList.add('show');
+      clearanceRadios.forEach(radio => radio.required = true);
+    } else {
+      clearanceTypeGroup.classList.add('hidden');
+      clearanceTypeGroup.classList.remove('show');
+      clearanceRadios.forEach(radio => {
+        radio.required = false;
+        radio.checked = false;
+      });
+    }
+  }
+
+  function validateForm() {
+    const lastName = document.getElementById('lastName');
+
+    const requiredFields = [
+      { field: lastName, name: 'Last Name' },
+      { field: emailInput, name: 'Email' }
+    ];
+
+    for (let { field, name } of requiredFields) {
+      if (!field || !field.value.trim()) {
+        alert(name + ' is required');
+        if (field) field.focus();
+        return false;
+      }
+    }
+
+    if (emailInput && emailInput.classList.contains('invalid')) {
+      alert('Please enter a valid email address');
+      emailInput.focus();
+      return false;
+    }
+
+    const mobileValue = mobileInput.value.trim();
+    if (mobileValue && (mobileInput.classList.contains('invalid') || !mobileInput.classList.contains('valid'))) {
+      alert('Please enter a valid Australian phone number (mobile or landline)');
+      mobileInput.focus();
+      return false;
+    }
+
+    if (securityEnquiry && securityEnquiry.checked) {
+      let clearanceSelected = false;
+      clearanceRadios.forEach(radio => {
+        if (radio.checked) clearanceSelected = true;
+      });
+      if (!clearanceSelected) {
+        alert('Please select a clearance type');
+        return false;
+      }
+    }
+
+    if (generalEnquiry && securityEnquiry && !generalEnquiry.checked && !securityEnquiry.checked) {
+      alert('Please select a type of enquiry');
+      return false;
+    }
+
+    return true;
+  }
+
+  
+function handleSubmit(event) {
+    event.preventDefault();
+
+    if (!validateForm()) return;
+  submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+    progressContainer.style.display = 'block';
+
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += 1;
+      progressBar.style.width = progress + '%';
+      progressText.textContent = progress + '%';
+
+      if (progress >= 100) {
+        clearInterval(interval);
+
+        gtag_report_conversion();
+
+        const firstName = document.getElementById('firstName');
+        const firstNameValue = firstName ? firstName.value.trim() : '';
+        const isSecurityEnquiry = securityEnquiry && securityEnquiry.checked;
+
+        let clearanceTypeValue = '';
+        clearanceRadios.forEach(radio => {
+          if (radio.checked) clearanceTypeValue = radio.value;
+        });
+
+        personaliseThankYou(firstNameValue, isSecurityEnquiry, clearanceTypeValue);
+
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.name = 'zohoFrame';
+        document.body.appendChild(iframe);
+
+        form.target = 'zohoFrame';
+        form.submit();
+
+        modal.style.display = 'none';
+        thankYouModal.style.display = 'block';
+
+        setTimeout(() => {
+          resetForm();
+          if (document.body.contains(iframe)) {
+            document.body.removeChild(iframe);
+          }
+          form.removeAttribute('target');
+
+          progressContainer.style.display = 'none';
+          progressBar.style.width = '0%';
+          progressText.textContent = '0%';
+          submitBtn.textContent = 'Submit Enquiry';
+        }, 1000);
+      }
+    }, 30);
+  }
+
+  function personaliseThankYou(firstName, isSecurityEnquiry, clearanceTypeValue) {
+    const title = document.getElementById('thankYouTitle');
+    const message = document.getElementById('thankYouMessage');
+
+    if (!title || !message) return;
+
+    const capitalizedName = firstName ? firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase() : '';
+    const greeting = capitalizedName ? 'Hi ' + capitalizedName : 'Thank you';
+
+    if (isSecurityEnquiry && clearanceTypeValue) {
+      title.textContent = greeting;
+      message.textContent = 'Thank you for your interest in the ' + clearanceTypeValue + '. Our security clearance specialists will be in touch soon to discuss your requirements and guide you through the sponsorship process. We typically respond within 24 hours during business days.';
+    } else {
+      title.textContent = greeting;
+      message.textContent = 'Thank you for your interest in NV2 security clearance. Someone from our team will be in touch soon to discuss how we can assist with your security clearance needs. We typically respond within 24 hours during business days.';
+    }
+  }
+
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (closeThankYouBtn) closeThankYouBtn.addEventListener('click', closeThankYouModal);
+  if (thankYouCloseBtn) thankYouCloseBtn.addEventListener('click', closeThankYouModal);
+
+  window.addEventListener('click', (event) => {
+    if (event.target === modal) closeModal();
+    if (event.target === thankYouModal) closeThankYouModal();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeModal();
+      closeThankYouModal();
+    }
+  });
+
+  if (emailInput) {
+    emailInput.addEventListener('input', () => {
+      clearTimeout(emailTimeout);
+      emailTimeout = setTimeout(validateEmail, 1000);
+    });
+    emailInput.addEventListener('blur', validateEmail);
   }
 
   if (mobileInput) {
@@ -1864,24 +2105,50 @@ return result;
           (event.keyCode === 88 && event.ctrlKey === true)) {
         return;
       }
-      const char = String.fromCharCode(event.keyCode);
-      if (!/[\d\s+()\-.]/.test(char)) {
+      if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
         event.preventDefault();
       }
     });
   }
+
+  if (messageField) {
+    messageField.addEventListener('input', function(e) {
+      const cursorPosition = e.target.selectionStart;
+      const capitalizedText = capitaliseSentences(e.target.value);
+
+      if (e.target.value !== capitalizedText) {
+        e.target.value = capitalizedText;
+        e.target.setSelectionRange(cursorPosition, cursorPosition);
+      }
+    });
+  }
+
+  if (generalEnquiry) generalEnquiry.addEventListener('change', toggleClearanceType);
+  if (securityEnquiry) securityEnquiry.addEventListener('change', toggleClearanceType);
+
+  if (form) form.addEventListener('submit', handleSubmit);
+  if (resetBtn) resetBtn.addEventListener('click', resetForm);
+
+  updateSubmitButton();
 </script>
 
+<!-- Zoho Analytics (Do Not Remove) -->
+<script id="wf_anal" src="https://crm.zohopublic.com.au/crm/WebFormAnalyticsServeServlet?rid=3a7f9f841bb7cd94d244fb2368ec192018d4f6741fd40aa87b719f6ab27c50a2ef7f58554d4b99ddad5a61d4b0d77a39gid3700390cf5acaf112e7b0eb214b66acec2164a64c71e836b488e5b1e02a70bf2e"></script>
+
+
 <script>
+
 var turnstileToken = null;
 window.onTurnstileSuccess = function(t) { turnstileToken = t; if (typeof updateSubmitButton === 'function') updateSubmitButton(); };
 window.onTurnstileError = function() { turnstileToken = null; if (typeof updateSubmitButton === 'function') updateSubmitButton(); };
 window.onTurnstileExpired = function() { turnstileToken = null; if (typeof updateSubmitButton === 'function') updateSubmitButton(); };
 
+// Block form submission until Turnstile is solved AND validated server-side
 document.addEventListener('DOMContentLoaded', function() {
   var f = document.getElementById('contactForm');
   if (!f) return;
   
+  // Wrap the submit button so it requires a token
   var subBtn = document.getElementById('submitBtn');
   var origUpdate = window.updateSubmitButton;
   if (typeof origUpdate === 'function') {
@@ -1891,8 +2158,9 @@ document.addEventListener('DOMContentLoaded', function() {
     };
   }
   
+  // Hijack the submit event with capture so we fire FIRST
   f.addEventListener('submit', function(e) {
-    if (f.dataset.turnstileVerified === '1') return;
+    if (f.dataset.turnstileVerified === '1') return; // already passed
     e.preventDefault();
     e.stopImmediatePropagation();
     
@@ -1915,6 +2183,7 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Security check failed. Please complete the verification and try again.');
         return;
       }
+      // Verified - mark form and re-fire the original submit
       f.dataset.turnstileVerified = '1';
       if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
       f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
@@ -1922,7 +2191,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
       alert('Verification service unavailable. Please try again.');
     });
-  }, true);
+  }, true); // capture phase - we run before other listeners
 });
 </script>
 </body>

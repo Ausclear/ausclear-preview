@@ -1745,34 +1745,20 @@ class EmailValidator {
   }
 }
 class MobileValidator {
-constructor() {
-this.cache = {};
-}
-
-validateMobile(input) {
-if (input == null) input = '';
-const raw = String(input).trim();
-if (raw === '') {
-return { isValid: true, message: '' };
-}
-const hasPlus = raw.charAt(0) === '+';
-let digits = raw.replace(/\D/g, '');
-if (hasPlus && digits.indexOf('61') === 0) {
-digits = '0' + digits.substring(2);
-} else if (digits.indexOf('61') === 0 && digits.length === 11) {
-digits = '0' + digits.substring(2);
-}
-let result;
-if (digits.length !== 10) {
-result = { isValid: false, message: 'Phone number must be 10 digits' };
-} else if (['02','03','04','07','08'].indexOf(digits.substring(0, 2)) === -1) {
-result = { isValid: false, message: 'Please enter a valid Australian phone number (mobile or landline)' };
-} else {
-result = { isValid: true, message: '' };
-}
-this.cache[input] = result;
-return result;
-}
+  validateMobile(input) {
+    if (input == null) input = '';
+    const raw = String(input).trim();
+    if (raw === '') return { isValid: true, message: '' };
+    const hasPlus = raw.charAt(0) === '+';
+    let digits = raw.replace(/\D/g, '');
+    if (hasPlus && digits.indexOf('61') === 0) { digits = '0' + digits.substring(2); }
+    else if (digits.indexOf('61') === 0 && digits.length === 11) { digits = '0' + digits.substring(2); }
+    if (digits.length !== 10) return { isValid: false, message: 'Phone number must be 10 digits' };
+    if (!['02','03','04','07','08'].includes(digits.substring(0, 2))) {
+      return { isValid: false, message: 'Please enter a valid Australian phone number (mobile or landline)' };
+    }
+    return { isValid: true, message: '' };
+  }
 }
 
 const emailValidator = new EmailValidator();
@@ -1920,8 +1906,8 @@ function validateMobile() {
 }
 
 function formatMobileInput(e) {
-  let v = e.target.value.replace(/\D/g, '');
-  if (v.length > 10) v = v.substring(0, 10);
+  let v = e.target.value.replace(/[^\d\s+()\-.]/g, '');
+  if (v.length > 20) v = v.substring(0, 20);
   e.target.value = v;
   validateMobile();
 }
@@ -1950,7 +1936,7 @@ function validateForm() {
   if (emailInput.classList.contains('invalid')) { alert('Please enter a valid email address'); emailInput.focus(); return false; }
   const mob = mobileInput.value.trim();
   if (mob && (mobileInput.classList.contains('invalid') || !mobileInput.classList.contains('valid'))) {
-    alert('Please enter a valid 10-digit Australian mobile number');
+    alert('Please enter a valid Australian phone number (mobile or landline)');
     mobileInput.focus(); return false;
   }
   if (securityEnquiry && securityEnquiry.checked) {
