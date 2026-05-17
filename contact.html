@@ -1661,13 +1661,13 @@ body {
 
               <div class="form-group">
                 <label class="form-label" for="mobile">Mobile <span style="color: var(--muted); font-weight: 400; text-transform: none; letter-spacing: 0;">(Optional)</span></label>
-                <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="10" placeholder="0412 345 678" autocomplete="tel">
+                <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="0412 345 678 or 08 8123 4567" autocomplete="tel">
                 <div id="mobileValidation" class="validation-message" style="display: none;">
                   <i class="fas fa-check-circle validation-icon" id="mobileCheck" style="display: none;"></i>
                   <i class="fas fa-exclamation-circle validation-icon" id="mobileError" style="display: none;"></i>
                   <span id="mobileText"></span>
                 </div>
-                <div class="help-text">Australian mobile numbers must be exactly 10 digits.</div>
+                <div class="help-text">Australian mobile or landline number (e.g. 0412 345 678 or 08 8123 4567).</div>
               </div>
             </div>
 
@@ -1866,29 +1866,34 @@ class EmailValidator {
 }
 
 class MobileValidator {
-  constructor() {
-    this.cache = {};
-  }
+constructor() {
+this.cache = {};
+}
 
-  validateMobile(mobile) {
-    const cleanMobile = mobile.replace(/\D/g, '');
-    let result;
-
-    if (cleanMobile.length === 0) {
-      result = { isValid: true, message: '' };
-    } else if (cleanMobile.length < 10) {
-      result = { isValid: false, message: 'Mobile must be 10 digits' };
-    } else if (cleanMobile.length === 10 && !cleanMobile.startsWith('04')) {
-      result = { isValid: false, message: 'Australian mobile numbers must start with 04' };
-    } else if (cleanMobile.length === 10 && cleanMobile.startsWith('04')) {
-      result = { isValid: true, message: '' };
-    } else {
-      result = { isValid: true, message: '' };
-    }
-
-    this.cache[mobile] = result;
-    return result;
-  }
+validateMobile(input) {
+if (input == null) input = '';
+const raw = String(input).trim();
+if (raw === '') {
+return { isValid: true, message: '' };
+}
+const hasPlus = raw.charAt(0) === '+';
+let digits = raw.replace(/\D/g, '');
+if (hasPlus && digits.indexOf('61') === 0) {
+digits = '0' + digits.substring(2);
+} else if (digits.indexOf('61') === 0 && digits.length === 11) {
+digits = '0' + digits.substring(2);
+}
+let result;
+if (digits.length !== 10) {
+result = { isValid: false, message: 'Phone number must be 10 digits' };
+} else if (['02','03','04','07','08'].indexOf(digits.substring(0, 2)) === -1) {
+result = { isValid: false, message: 'Please enter a valid Australian phone number (mobile or landline)' };
+} else {
+result = { isValid: true, message: '' };
+}
+this.cache[input] = result;
+return result;
+}
 }
 
 // ===== INITIALISE VALIDATORS =====
@@ -2110,10 +2115,11 @@ function validateMobile() {
 }
 
 function formatMobileInput(event) {
-  let value = event.target.value.replace(/\D/g, '');
-  if (value.length > 10) value = value.substring(0, 10);
-  event.target.value = value;
-  validateMobile();
+// Allow digits, spaces, dashes, brackets, plus, dots - strip everything else
+let value = event.target.value.replace(/[^\d\s+()\-.]/g, '');
+if (value.length > 20) value = value.substring(0, 20);
+event.target.value = value;
+validateMobile();
 }
 
 // ===== CLEARANCE TYPE TOGGLE =====

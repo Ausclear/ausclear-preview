@@ -1322,9 +1322,9 @@ body {
               <div class="help-text">We verify your email address exists to ensure we can reach you.</div>
             </div>
             <div class="form-group">
-              <label class="form-label" for="mobile">Mobile (Optional)</label>
-              <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="10" placeholder="0412345678" autocomplete="tel">
-              <div class="help-text">Australian mobile numbers must be exactly 10 digits.</div>
+              <label class="form-label" for="mobile">Phone (Optional)</label>
+              <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="0412 345 678 or 08 8123 4567" autocomplete="tel">
+              <div class="help-text">Australian mobile or landline number (e.g. 0412 345 678 or 08 8123 4567).</div>
             </div>
           </div>
           <div class="form-row">
@@ -1570,9 +1570,28 @@ async function validateEmail() {
 }
 
 function formatMobileInput(event) {
-  let value = event.target.value.replace(/\D/g, '');
-  if (value.length > 10) value = value.substring(0, 10);
-  event.target.value = value;
+// Allow digits, spaces, dashes, brackets, plus, dots - strip everything else
+let value = event.target.value.replace(/[^\d\s+()\-.]/g, '');
+if (value.length > 20) value = value.substring(0, 20);
+event.target.value = value;
+validateMobile();
+}
+
+function validateMobile() {
+  const raw = mobileInput.value.trim();
+  if (raw === '') {
+    mobileInput.classList.remove('valid', 'invalid');
+    updateSubmitButton();
+    return;
+  }
+  const hasPlus = raw.charAt(0) === '+';
+  let digits = raw.replace(/\D/g, '');
+  if (hasPlus && digits.indexOf('61') === 0) { digits = '0' + digits.substring(2); }
+  else if (digits.indexOf('61') === 0 && digits.length === 11) { digits = '0' + digits.substring(2); }
+  const ok = digits.length === 10 && ['02','03','04','07','08'].includes(digits.substring(0, 2));
+  mobileInput.classList.toggle('valid', ok);
+  mobileInput.classList.toggle('invalid', !ok);
+  updateSubmitButton();
 }
 
 function toggleClearanceType() {
@@ -1596,9 +1615,12 @@ function validateForm() {
   }
   const mv = mobileInput.value.trim();
   if (mv && mv.length > 0) {
-    const cm = mv.replace(/\D/g, '');
-    if (cm.length !== 10 || !cm.startsWith('04')) {
-      alert('If providing a mobile number, please enter a valid 10-digit Australian mobile number starting with 04');
+    const hasPlus = mv.charAt(0) === '+';
+    let cm = mv.replace(/\D/g, '');
+    if (hasPlus && cm.indexOf('61') === 0) { cm = '0' + cm.substring(2); }
+    else if (cm.indexOf('61') === 0 && cm.length === 11) { cm = '0' + cm.substring(2); }
+    if (cm.length !== 10 || !['02','03','04','07','08'].includes(cm.substring(0, 2))) {
+      alert('Please enter a valid Australian phone number (mobile or landline). Examples: 0412 345 678 or 08 8123 4567');
       mobileInput.focus(); return false;
     }
   }
