@@ -1258,6 +1258,8 @@ body.modal-open { overflow: hidden; }
   html { scroll-behavior: auto; }
 }
 </style>
+
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
 
@@ -1634,6 +1636,17 @@ body.modal-open { overflow: hidden; }
         <input type="text" style="display: none;" name="aG9uZXlwb3Q" value="">
 
                 
+
+        
+        <div class="turnstile-wrap" style="display: flex; justify-content: center; margin: 18px 0 4px; min-height: 65px;">
+          <div class="cf-turnstile"
+               data-sitekey="0x4AAAAAADRAwtnbl8MHBAU2"
+               data-callback="onTurnstileSuccess"
+               data-error-callback="onTurnstileError"
+               data-expired-callback="onTurnstileExpired"
+               data-theme="dark"
+               data-action="enquiry"></div>
+        </div>
 
         <div class="form-buttons">
           <button type="submit" id="submitBtn" class="form-button primary" disabled>Submit Enquiry</button>
@@ -2040,5 +2053,64 @@ updateSubmitButton();
 <!-- Zoho Analytics -->
 <script id="wf_anal" src="https://crm.zohopublic.com.au/crm/WebFormAnalyticsServeServlet?rid=3a7f9f841bb7cd94d244fb2368ec192018d4f6741fd40aa87b719f6ab27c50a2ef7f58554d4b99ddad5a61d4b0d77a39gid3700390cf5acaf112e7b0eb214b66acec2164a64c71e836b876ea7b76e037631gid1e501eb1e524656ac6a4364109f11997f7a1ad92d8e41e979a07cd75a7d48ac6gidd3426ad627b17daca4586f3359b12d723e4c7a4688c670b7270efcd443a25b525a70"></script>
 
+
+<script>
+
+var turnstileToken = null;
+window.onTurnstileSuccess = function(t) { turnstileToken = t; if (typeof updateSubmitButton === 'function') updateSubmitButton(); };
+window.onTurnstileError = function() { turnstileToken = null; if (typeof updateSubmitButton === 'function') updateSubmitButton(); };
+window.onTurnstileExpired = function() { turnstileToken = null; if (typeof updateSubmitButton === 'function') updateSubmitButton(); };
+
+// Block form submission until Turnstile is solved AND validated server-side
+document.addEventListener('DOMContentLoaded', function() {
+  var f = document.getElementById('contactForm');
+  if (!f) return;
+  
+  // Wrap the submit button so it requires a token
+  var subBtn = document.getElementById('submitBtn');
+  var origUpdate = window.updateSubmitButton;
+  if (typeof origUpdate === 'function') {
+    window.updateSubmitButton = function() {
+      origUpdate();
+      if (subBtn && !turnstileToken) subBtn.disabled = true;
+    };
+  }
+  
+  // Hijack the submit event with capture so we fire FIRST
+  f.addEventListener('submit', function(e) {
+    if (f.dataset.turnstileVerified === '1') return; // already passed
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    
+    if (!turnstileToken) {
+      alert('Please complete the security check before submitting.');
+      return;
+    }
+    
+    if (subBtn) { subBtn.disabled = true; subBtn.textContent = 'Verifying…'; }
+    
+    fetch('https://ausclear-turnstile.vercel.app/api/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: turnstileToken })
+    }).then(function(r) { return r.json(); }).then(function(result) {
+      if (!result.success) {
+        if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
+        if (window.turnstile && turnstile.reset) turnstile.reset();
+        turnstileToken = null;
+        alert('Security check failed. Please complete the verification and try again.');
+        return;
+      }
+      // Verified - mark form and re-fire the original submit
+      f.dataset.turnstileVerified = '1';
+      if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
+      f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    }).catch(function() {
+      if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
+      alert('Verification service unavailable. Please try again.');
+    });
+  }, true); // capture phase - we run before other listeners
+});
+</script>
 </body>
 </html>
