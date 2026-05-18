@@ -168,7 +168,7 @@
       <textarea id="message" placeholder="Your enquiry..."></textarea>
     </div>
 
-    <div class="cf-turnstile" data-sitekey="0x4AAAAAADRAwoWMvGQEGQad" data-theme="light"></div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADRAwtnbl8MHBAU2" data-callback="onTurnstileSuccess" data-expired-callback="onTurnstileExpired" data-theme="light"></div>
 
     <button type="submit" id="submitBtn">Submit Lead</button>
   </form>
@@ -179,6 +179,11 @@
 </div>
 
 <script>
+// Turnstile callbacks
+window._turnstileToken = null;
+window.onTurnstileSuccess = function(token) { window._turnstileToken = token; };
+window.onTurnstileExpired = function() { window._turnstileToken = null; };
+
 const ENDPOINT = 'https://ausclear-turnstile.vercel.app/api/submit-lead';
 
 // Toggle clearance type visibility
@@ -230,8 +235,7 @@ document.getElementById('leadForm').addEventListener('submit', async function(e)
     alert('Please select a clearance type'); return;
   }
 
-  const tokenEl = document.querySelector('[name="cf-turnstile-response"]');
-  const turnstileToken = tokenEl ? tokenEl.value : '';
+  const turnstileToken = window._turnstileToken || '';
 
   const payload = {
     firstName: document.getElementById('firstName').value.trim(),
