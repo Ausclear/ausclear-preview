@@ -1111,6 +1111,146 @@ ul.content-list li::before {
   .form-label { font-size: 11px; }
   .form-input, .form-select, .form-textarea { font-size: 15px; padding: 13px 14px; }
 }
+
+/* === Dark luxury toast notifications === */
+.ac-toast-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 99998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+.ac-toast-backdrop.active { opacity: 1; pointer-events: auto; }
+.ac-toast-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 99999;
+  width: min(92vw, 460px);
+  pointer-events: none;
+}
+.ac-toast {
+  background: linear-gradient(180deg, #14141a 0%, #0d0d12 100%);
+  border: 1px solid rgba(201,168,76,0.32);
+  border-radius: 12px;
+  padding: 22px 24px;
+  box-shadow: 0 28px 70px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(201,168,76,0.14);
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  pointer-events: auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow: hidden;
+  animation: ac-toast-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards;
+}
+.ac-toast.exit { animation: ac-toast-out 0.3s ease forwards; }
+.ac-toast::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 26px;
+  right: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #c9a84c 30%, #d9bf6f 50%, #c9a84c 70%, transparent);
+  opacity: 0.6;
+}
+.ac-toast-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 600;
+  background: radial-gradient(circle at 30% 30%, #d9bf6f, #c9a84c 60%, #a4862c);
+  color: #07070a;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 4px 12px rgba(201,168,76,0.3);
+  font-family: 'Inter', sans-serif;
+}
+.ac-toast.error .ac-toast-icon {
+  background: radial-gradient(circle at 30% 30%, #f0a6a0, #d96458 60%, #a83a30);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.2), 0 4px 12px rgba(217,100,88,0.3);
+  color: #2a0c08;
+}
+.ac-toast-body { flex: 1; min-width: 0; padding-top: 2px; }
+.ac-toast-title {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 19px;
+  font-weight: 500;
+  color: #f5f1e6;
+  margin: 0 0 6px;
+  line-height: 1.25;
+  letter-spacing: 0.005em;
+}
+.ac-toast-title em { color: #d9bf6f; font-style: italic; }
+.ac-toast-message {
+  font-size: 14px;
+  color: #a8a8b4;
+  margin: 0;
+  line-height: 1.5;
+}
+.ac-toast-close {
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.16);
+  cursor: pointer;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  color: #8a8a96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  border-radius: 50%;
+  transition: all 0.18s;
+  font-family: inherit;
+}
+.ac-toast-close:hover {
+  background: rgba(201,168,76,0.1);
+  color: #c9a84c;
+  border-color: rgba(201,168,76,0.4);
+}
+.ac-toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #a4862c, #c9a84c, #d9bf6f, #c9a84c, #a4862c);
+  opacity: 0.85;
+  animation: ac-toast-progress 4.5s linear forwards;
+}
+.ac-toast.error .ac-toast-progress {
+  background: linear-gradient(90deg, #a83a30, #d96458, #f0a6a0, #d96458, #a83a30);
+}
+@keyframes ac-toast-in {
+  from { transform: scale(0.85) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+@keyframes ac-toast-out {
+  to { transform: scale(0.9) translateY(10px); opacity: 0; }
+}
+@keyframes ac-toast-progress {
+  from { width: 100%; }
+  to { width: 0; }
+}
+@media (max-width: 480px) {
+  .ac-toast { padding: 18px 18px; }
+  .ac-toast-title { font-size: 17px; }
+  .ac-toast-message { font-size: 13px; }
+  .ac-toast-icon { width: 38px; height: 38px; font-size: 18px; }
+}
+
 </style>
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -1966,21 +2106,21 @@ return result;
 
     for (let { field, name } of requiredFields) {
       if (!field || !field.value.trim()) {
-        alert(name + ' is required');
+        showToast('warning', 'Missing <em>field</em>', name + ' is required.');
         if (field) field.focus();
         return false;
       }
     }
 
     if (emailInput && emailInput.classList.contains('invalid')) {
-      alert('Please enter a valid email address');
+      showToast('warning', 'Invalid <em>email</em>', 'Please enter a valid email address.');
       emailInput.focus();
       return false;
     }
 
     const mobileValue = mobileInput.value.trim();
     if (mobileValue && (mobileInput.classList.contains('invalid') || !mobileInput.classList.contains('valid'))) {
-      alert('Must be a valid Australian mobile or landline');
+      showToast('warning', 'Invalid <em>phone</em>', 'Must be a valid Australian mobile or landline number.');
       mobileInput.focus();
       return false;
     }
@@ -1991,13 +2131,13 @@ return result;
         if (radio.checked) clearanceSelected = true;
       });
       if (!clearanceSelected) {
-        alert('Please select a clearance type');
+        showToast('warning', 'Missing <em>clearance</em>', 'Please select a clearance type before submitting.');
         return false;
       }
     }
 
     if (generalEnquiry && securityEnquiry && !generalEnquiry.checked && !securityEnquiry.checked) {
-      alert('Please select a type of enquiry');
+      showToast('warning', 'Missing <em>field</em>', 'Please select a type of enquiry before submitting.');
       return false;
     }
 
@@ -2175,7 +2315,7 @@ document.addEventListener('DOMContentLoaded', function() {
     e.stopImmediatePropagation();
     
     if (!turnstileToken) {
-      alert('Please complete the security check before submitting.');
+      showToast('warning', 'Security <em>check</em> required', 'Please complete the security check before submitting your enquiry.');
       return;
     }
     
@@ -2190,7 +2330,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
         if (window.turnstile && turnstile.reset) turnstile.reset();
         turnstileToken = null;
-        alert('Security check failed. Please complete the verification and try again.');
+        showToast('error', 'Verification <em>failed</em>', 'Please complete the security check again and resubmit your enquiry.');
         return;
       }
       // Verified - mark form and re-fire the original submit
@@ -2199,10 +2339,60 @@ document.addEventListener('DOMContentLoaded', function() {
       f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     }).catch(function() {
       if (subBtn) { subBtn.disabled = false; subBtn.textContent = 'Submit Enquiry'; }
-      alert('Verification service unavailable. Please try again.');
+      showToast('error', 'Service <em>unavailable</em>', 'Our security verification service is temporarily unreachable. Please try again in a moment.');
     });
   }, true); // capture phase - we run before other listeners
 });
 </script>
+
+<!-- Dark luxury toast notification system -->
+<div class="ac-toast-backdrop" id="acToastBackdrop"></div>
+<div class="ac-toast-container" id="acToastContainer"></div>
+
+
+<!-- AusClear toast notification helper -->
+<script>
+(function(){
+  var TOAST_DURATION = 4500;
+  
+  window.showToast = function(type, title, message) {
+    var container = document.getElementById('acToastContainer');
+    var backdrop = document.getElementById('acToastBackdrop');
+    if (!container || !backdrop) return;
+    
+    // Clear existing toasts - one at a time
+    container.querySelectorAll('.ac-toast').forEach(function(t){ t.remove(); });
+    
+    var toast = document.createElement('div');
+    toast.className = 'ac-toast ' + (type || 'info');
+    var icon = type === 'error' ? '✕' : (type === 'success' ? '✓' : (type === 'warning' ? '!' : 'i'));
+    
+    toast.innerHTML =
+      '<div class="ac-toast-icon">' + icon + '</div>' +
+      '<div class="ac-toast-body">' +
+        '<p class="ac-toast-title">' + title + '</p>' +
+        '<p class="ac-toast-message">' + message + '</p>' +
+      '</div>' +
+      '<button type="button" class="ac-toast-close" aria-label="Close">×</button>' +
+      '<div class="ac-toast-progress"></div>';
+    
+    toast.querySelector('.ac-toast-close').addEventListener('click', function(){ dismissToast(toast); });
+    
+    backdrop.classList.add('active');
+    backdrop.onclick = function(){ dismissToast(toast); };
+    container.appendChild(toast);
+    
+    setTimeout(function(){ if (toast.parentElement) dismissToast(toast); }, TOAST_DURATION);
+  };
+  
+  function dismissToast(toast) {
+    var backdrop = document.getElementById('acToastBackdrop');
+    toast.classList.add('exit');
+    if (backdrop) backdrop.classList.remove('active');
+    setTimeout(function(){ if (toast.parentElement) toast.remove(); }, 300);
+  }
+})();
+</script>
+
 </body>
 </html>
