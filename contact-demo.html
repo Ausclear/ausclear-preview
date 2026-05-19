@@ -659,28 +659,9 @@ async function handleSubmit(event) {
     if (!validateForm()) return;
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Verifying...';
+    submitBtn.textContent = 'Submitting...';
     submitStatus.className = 'submit-status';
     submitStatus.textContent = '';
-
-    // Server-side Turnstile verification
-    try {
-        const verifyResp = await fetch('https://ausclear-turnstile.vercel.app/api/verify', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: turnstileToken })
-        });
-        const verifyData = await verifyResp.json().catch(() => ({}));
-        if (!verifyData.success) {
-            showToast('Security check failed. Please try again.', 'Security Check Failed', 'error');
-            turnstileToken = null;
-            if (window.turnstile) { try { window.turnstile.reset(); } catch(e) {} }
-            submitBtn.textContent = 'Submit'; updateSubmitButton(); return;
-        }
-    } catch(e) {
-        showToast('Security check failed. Please try again.', 'Security Check Failed', 'error');
-        submitBtn.textContent = 'Submit'; updateSubmitButton(); return;
-    }
-
-    submitBtn.textContent = 'Submitting...';
     progressContainer.style.display = 'block';
 
     const firstNameRaw = document.getElementById('firstName').value.trim();
