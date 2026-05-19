@@ -375,7 +375,7 @@
                     <div class="form-group conditional-field hidden full-width" id="clearanceTypeGroup">
                         <label class="form-label">Clearance Type<span class="required-star">*</span></label>
                         <div class="radio-group" role="radiogroup" aria-label="Clearance Type">
-                            <label class="radio-option" for="baselineClearance"><input type="radio" name="LEADCF5" value="Baseline Clearance" id="baselineClearance" class="radio-input clearance-radio" checked><div class="radio-custom"></div><span class="radio-label-text">Baseline<br>Clearance</span></label>
+                            <label class="radio-option" for="baselineClearance"><input type="radio" name="LEADCF5" value="Baseline Clearance" id="baselineClearance" class="radio-input clearance-radio"><div class="radio-custom"></div><span class="radio-label-text">Baseline<br>Clearance</span></label>
                             <label class="radio-option" for="nv1Clearance"><input type="radio" name="LEADCF5" value="NV1 Clearance" id="nv1Clearance" class="radio-input clearance-radio"><div class="radio-custom"></div><span class="radio-label-text">NV1<br>Clearance</span></label>
                             <label class="radio-option" for="nv2Clearance"><input type="radio" name="LEADCF5" value="NV2 Clearance" id="nv2Clearance" class="radio-input clearance-radio"><div class="radio-custom"></div><span class="radio-label-text">NV2<br>Clearance</span></label>
                         </div>
@@ -642,7 +642,7 @@
                 email: emailInput.value.trim(),
                 mobile: mobileInput.value.replace(/\D/g, '') || '',
                 enquiryType: securityEnquiry.checked ? 'Security Clearance' : 'General',
-                clearanceType: clearanceTypeValue,
+                clearanceType: securityEnquiry.checked ? clearanceTypeValue : '',
                 state: document.getElementById('state').value,
                 leadSource: document.getElementById('leadSource').value,
                 message: messageField.value.trim(),
