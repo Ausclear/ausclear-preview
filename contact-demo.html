@@ -331,7 +331,7 @@ body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line
 <i class="fas fa-exclamation-circle validation-icon" id="mobileError" style="display:none;"></i>
 <span id="mobileText"></span>
 </div>
-<div class="help-text">Australian mobile (04xx) or landline (02/03/07/08). Not 13xx/1300/1800.</div>
+<div class="help-text">Mobile or landline numbers only.</div>
 </div>
 </div>
 
@@ -472,13 +472,13 @@ class PhoneValidator {
         const v = phone.replace(/\D/g, '');
         if (!v.length) return { isValid: true, message: '' };
         // Block premium/freecall/business numbers
-        if (/^(1300|1800|1900)/.test(v)) return { isValid: false, message: v.slice(0,4) + ' numbers are not accepted' };
-        if (/^13\d/.test(v) && !v.startsWith('1300')) return { isValid: false, message: '13xx numbers are not accepted' };
+        if (/^(1300|1800|1900)/.test(v)) return { isValid: false, message: 'Please enter a mobile or landline number.' };
+        if (/^13\d/.test(v) && !v.startsWith('1300')) return { isValid: false, message: 'Please enter a mobile or landline number.' };
         if (v.length < 10) return { isValid: false, message: `Need ${10 - v.length} more digit${10 - v.length !== 1 ? 's' : ''}` };
         if (v.length > 10) return { isValid: false, message: 'Too many digits' };
         if (/^04/.test(v)) return { isValid: true, message: 'Valid Australian mobile' };
         if (/^0[2378]\d{8}$/.test(v)) return { isValid: true, message: 'Valid Australian landline' };
-        return { isValid: false, message: 'Not a recognised Australian number' };
+        return { isValid: false, message: 'Please enter a mobile or landline number.' };
     }
 }
 
