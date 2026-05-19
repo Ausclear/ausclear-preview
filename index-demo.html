@@ -474,14 +474,14 @@ AusClear provides referral and advisory support for Baseline, NV1, and NV2 secur
 <label class="form-label" for="state">State/Territory</label>
 <select id="state" name="State" class="form-select" autocomplete="address-level1">
 <option value="">-- Select --</option>
-<option value="ACT">ACT</option>
-<option value="NSW">NSW</option>
-<option value="NT">NT</option>
-<option value="QLD">QLD</option>
-<option value="SA">SA</option>
-<option value="TAS">TAS</option>
-<option value="VIC">VIC</option>
-<option value="WA">WA</option>
+<option value="Australian Capital Territory">Australian Capital Territory</option>
+<option value="New South Wales">New South Wales</option>
+<option value="Northern Territory">Northern Territory</option>
+<option value="Queensland">Queensland</option>
+<option value="South Australia">South Australia</option>
+<option value="Tasmania">Tasmania</option>
+<option value="Victoria">Victoria</option>
+<option value="Western Australia">Western Australia</option>
 </select>
 </div>
 <div class="form-group">
@@ -737,8 +737,8 @@ clearanceRadios.forEach(radio => { if (radio.checked) clearanceTypeValue = radio
 
 const firstName = document.getElementById('firstName').value.trim();
 const payload = {
-firstName,
-lastName: document.getElementById('lastName').value.trim(),
+firstName: (document.getElementById('firstName').value.trim().charAt(0).toUpperCase() + document.getElementById('firstName').value.trim().slice(1).toLowerCase()),
+lastName: document.getElementById('lastName').value.trim().toUpperCase(),
 email: emailInput.value.trim(),
 mobile: mobileInput.value.replace(/\D/g, '') || '',
 enquiryType: securityEnquiry.checked ? 'Security Clearance' : 'General',
@@ -991,3 +991,5 @@ requestAnimationFrame(update);
 update();
 }
 </script>
+</body>
+</html>
