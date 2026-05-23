@@ -665,11 +665,17 @@ async function validateEmail() {
 
 function validateMobile() {
   const raw = mobileInput.value.trim();
-  if (!raw) { mobileInput.classList.remove('valid','invalid'); return; }
+  if (!raw) { mobileInput.classList.remove('valid','invalid'); updateSubmitButton(); return; }
   const digits = raw.replace(/\D/g, '');
-  const ok = digits.length === 10 && /^0[2-478]/.test(digits) && !/^(1300|1800|1900|13\d)/.test(digits);
+  if (digits.length < 10) { mobileInput.classList.remove('valid'); mobileInput.classList.add('invalid'); updateSubmitButton(); return; }
+  if (digits.length > 10) { mobileInput.classList.remove('valid'); mobileInput.classList.add('invalid'); updateSubmitButton(); return; }
+  if (/^(1300|1800|1900)/.test(digits) || (/^13/.test(digits) && digits.length === 10 && !(/^(02|03|04|07|08)/.test(digits)))) {
+    mobileInput.classList.remove('valid'); mobileInput.classList.add('invalid'); updateSubmitButton(); return;
+  }
+  const ok = /^04/.test(digits) || /^0[2378]/.test(digits);
   mobileInput.classList.toggle('valid', ok);
   mobileInput.classList.toggle('invalid', !ok);
+  updateSubmitButton();
 }
 
 function toggleClearanceType() {
