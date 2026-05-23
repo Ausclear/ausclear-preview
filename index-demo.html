@@ -196,9 +196,11 @@ body { font-family: var(--sans); line-height: 1.6; color: var(--text); backgroun
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 .help-text { margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.4; min-height: 18px; }
 .form-buttons { display: flex; justify-content: center; gap: 16px; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); flex-wrap: wrap; }
-.progress-bar-container { display: none; width: 100%; height: 3px; background-color: var(--bg-2); border-radius: 2px; overflow: hidden; margin-bottom: 18px; }
-.progress-bar-container.active { display: block; }
-.progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold-soft), var(--gold), var(--gold-deep)); transition: width 0.1s linear; }
+.progress-bar-container { display: none; justify-content: center; align-items: center; margin-bottom: 18px; min-height: 48px; }
+.progress-bar-container.active { display: flex; }
+.progress-bar { display: none; }
+.spinner-ring { width: 40px; height: 40px; border: 3px solid var(--line); border-top-color: var(--gold); border-radius: 50%; animation: spin-ring 0.8s linear infinite; }
+@keyframes spin-ring { to { transform: rotate(360deg); } }
 .form-button { padding: 14px 28px; border: 1px solid transparent; border-radius: 50px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-transform: uppercase; letter-spacing: 0.08em; min-width: 120px; outline: none; font-family: var(--sans); }
 .form-button.primary { background: linear-gradient(180deg, var(--gold-soft) 0%, var(--gold) 50%, var(--gold-deep) 100%); color: var(--bg); border-color: var(--gold); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 10px 30px -10px rgba(201,168,76,0.5); }
 .form-button.primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 16px 40px -12px rgba(201,168,76,0.7); }
@@ -533,7 +535,7 @@ body { font-family: var(--sans); line-height: 1.6; color: var(--text); backgroun
             <label class="form-label" for="message">Message</label>
             <textarea id="message" name="Description" class="form-textarea" placeholder="Tell us about your security clearance requirements..."></textarea>
           </div>
-          <div class="progress-bar-container" id="progressBarContainer"><div class="progress-bar" id="progressBar"></div></div>
+          <div class="progress-bar-container" id="progressBarContainer"><div class="spinner-ring"></div></div>
           <div style="display:flex;justify-content:center;margin:18px 0 4px;min-height:65px;">
             <div class="cf-turnstile" data-sitekey="0x4AAAAAADRAwtnbl8MHBAU2" data-callback="onTurnstileSuccess" data-error-callback="onTurnstileError" data-expired-callback="onTurnstileExpired" data-theme="dark" data-action="enquiry"></div>
           </div>
@@ -704,7 +706,6 @@ async function handleSubmit(event) {
   if (!validateForm()) return;
 
   const pbc = document.getElementById('progressBarContainer');
-  const pb = document.getElementById('progressBar');
   pbc.classList.add('active');
   submitBtn.disabled = true;
 
@@ -729,23 +730,23 @@ async function handleSubmit(event) {
 
   let progress = 0;
   const interval = setInterval(() => {
-    progress += 1; pb.style.width = progress + '%';
+    progress += 1; // progress tick
     if (progress >= 90) {
       clearInterval(interval);
       fetch(SUBMIT_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       .then(r => r.json())
       .then(data => {
-        pb.style.width = '100%';
+        // done
         if (data.success) {
           gtagSendEvent();
           personaliseThankYou(payload.firstName, isSecurityEnq, clearanceTypeVal);
           closeContactModal();
           thankYouModal.style.display = 'block';
-          setTimeout(() => { resetForm(); pbc.classList.remove('active'); pb.style.width = '0%'; }, 1000);
+          setTimeout(() => { resetForm(); pbc.classList.remove('active'); // reset }, 1000);
         } else { throw new Error(data.message || 'Submission failed'); }
       })
       .catch(() => {
-        pbc.classList.remove('active'); pb.style.width = '0%';
+        pbc.classList.remove('active'); // reset
         submitBtn.disabled = false;
         showToast('error', 'Submission <em>failed</em>', 'Sorry, there was a problem sending your message. Please try again or call 1300 027 423.');
       });
