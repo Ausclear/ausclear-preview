@@ -743,11 +743,11 @@ async function handleSubmit(event) {
           personaliseThankYou(payload.firstName, isSecurityEnq, clearanceTypeVal);
           closeContactModal();
           thankYouModal.style.display = 'block';
-          setTimeout(() => { resetForm(); pbc.classList.remove('active'); // reset }, 1000);
+          setTimeout(() => { resetForm(); pbc.classList.remove('active'); }, 1000);
         } else { throw new Error(data.message || 'Submission failed'); }
       })
       .catch(() => {
-        pbc.classList.remove('active'); // reset
+        pbc.classList.remove('active');
         submitBtn.disabled = false;
         showToast('error', 'Submission <em>failed</em>', 'Sorry, there was a problem sending your message. Please try again or call 1300 027 423.');
       });
