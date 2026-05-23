@@ -440,6 +440,12 @@ body {
   .section-subtitle { font-size: 15px; }
 }
 
+@media (hover: none) and (pointer: coarse) {
+  .contact-card-inner { transform: none !important; }
+  .contact-card:hover .contact-card-inner { transform: none; }
+  .contact-card-back { display: none; }
+}
+
 @media (max-width: 480px) {
   .container { padding: 0 16px; }
   .page-hero { padding: 64px 0 120px; }
