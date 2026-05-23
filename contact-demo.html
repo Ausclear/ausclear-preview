@@ -219,9 +219,7 @@ body { font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(-
 @media (max-width: 768px) {
   .container { padding: 0 18px; } .page-hero { padding: 80px 0 140px; } .content-section.tone { padding: 60px 0 80px; } .contact-methods-wrap { margin-top: -90px; }
   .contact-methods { grid-template-columns: 1fr; gap: 14px; } .contact-methods .contact-card:nth-child(3) { grid-column: auto; }
-  .contact-card { padding: 28px 24px; min-height: auto; perspective: none; } .contact-card-inner { min-height: auto; transform: none !important; transition: none; } .contact-card:hover .contact-card-inner { transform: none; } .contact-card:hover { transform: none; box-shadow: var(--shadow-sm); } .contact-card::before { display: none; }
-  .contact-card-front, .contact-card-back { position: relative; backface-visibility: visible; -webkit-backface-visibility: visible; transform: none; width: 100%; height: auto; }
-  .contact-card-back { display: none; } .contact-card-front { padding: 8px 0; }
+  .contact-card { padding: 28px 24px; min-height: 240px; }
   .form-header { padding: 26px 22px; } .form-body { padding: 26px 18px; } .form-section { border-radius: 14px; } .form-row { grid-template-columns: 1fr; gap: 0; } .clearance-radio-group { grid-template-columns: 1fr; } .radio-group { flex-direction: column; } .radio-option { width: 100%; }
   .business-info-title { padding: 22px 22px; font-size: 18px; } .business-info-body { padding: 4px 22px 18px; } .business-info-item { padding: 16px 0; gap: 14px; } .business-info { border-radius: 14px; }
   .form-buttons { flex-direction: column; gap: 10px; } .form-button { width: 100%; padding: 15px 24px; }
@@ -238,8 +236,7 @@ body { font-family: var(--sans); font-size: 16px; line-height: 1.6; color: var(-
   .modal-content { margin: 10% auto; width: 94%; border-radius: 14px; } .modal-header h2 { font-size: 20px; } .modal-body h3 { font-size: 22px; }
   .eyebrow { font-size: 11px; padding: 6px 14px; } .breadcrumb { font-size: 12px; }
 }
-@media (hover: none) and (pointer: coarse) {
-  .contact-card { perspective: none; } .contact-card-inner { transform: none !important; transition: none; } .contact-card:hover .contact-card-inner { transform: none; } .contact-card:hover { transform: none; } .contact-card-back { display: none; }
+
   .contact-card-front, .contact-card-back { position: relative; backface-visibility: visible; -webkit-backface-visibility: visible; transform: none; }
 }
 .ac-toast-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); z-index: 99998; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
@@ -743,6 +740,16 @@ if (resetBtn) resetBtn.addEventListener('click', resetForm);
 updateSubmitButton();
 updateBusinessStatus();
 setInterval(updateBusinessStatus, 60000);
+
+// Click to flip cards on touch devices
+document.querySelectorAll('.contact-card').forEach(card => {
+  card.addEventListener('click', function(e) {
+    // Only toggle flip on touch devices (no hover)
+    if (window.matchMedia('(hover: none)').matches) {
+      this.classList.toggle('flipped');
+    }
+  });
+});
 </script>
 
 <script>
