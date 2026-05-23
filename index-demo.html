@@ -706,6 +706,7 @@ async function handleSubmit(event) {
   if (!validateForm()) return;
 
   const pbc = document.getElementById('progressBarContainer');
+  const pb = null; // spinner replaces bar
   pbc.classList.add('active');
   submitBtn.disabled = true;
 
