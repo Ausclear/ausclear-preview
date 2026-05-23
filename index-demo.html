@@ -473,7 +473,7 @@ body { font-family: var(--sans); line-height: 1.6; color: var(--text); backgroun
             </div>
             <div class="form-group">
               <label class="form-label" for="mobile">Phone (Optional)</label>
-              <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="20" placeholder="Mobile or landline" autocomplete="tel">
+              <input type="tel" id="mobile" name="Mobile" class="form-input" maxlength="10" placeholder="Mobile or landline" autocomplete="tel">
               <div class="help-text">Mobile or landline numbers only.</div>
             </div>
           </div>
@@ -781,7 +781,15 @@ document.addEventListener('keydown', e => {
 });
 document.getElementById('lastName').addEventListener('input', updateSubmitButton);
 if (emailInput) { emailInput.addEventListener('input', () => { clearTimeout(emailTimeout); emailTimeout = setTimeout(validateEmail, 1000); }); emailInput.addEventListener('blur', validateEmail); }
-if (mobileInput) { mobileInput.addEventListener('input', validateMobile); mobileInput.addEventListener('blur', validateMobile); }
+if (mobileInput) {
+  mobileInput.addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 10) v = v.slice(0, 10);
+    e.target.value = v;
+    validateMobile();
+  });
+  mobileInput.addEventListener('blur', validateMobile);
+}
 if (messageField) { messageField.addEventListener('input', function(e) { const c = e.target.selectionStart; const t = capitaliseSentences(e.target.value); if (e.target.value !== t) { e.target.value = t; e.target.setSelectionRange(c,c); } }); }
 if (generalEnquiry) generalEnquiry.addEventListener('change', toggleClearanceType);
 if (securityEnquiry) securityEnquiry.addEventListener('change', toggleClearanceType);
