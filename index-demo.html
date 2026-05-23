@@ -704,18 +704,15 @@ function validateForm() {
 async function handleSubmit(event) {
   event.preventDefault();
   if (!validateForm()) return;
-
   const pbc = document.getElementById('progressBarContainer');
-  const pb = null; // spinner replaces bar
   pbc.classList.add('active');
   submitBtn.disabled = true;
-
+  let progress = 0;
   const firstNameRaw = document.getElementById('firstName').value.trim();
   const lastNameRaw = document.getElementById('lastName').value.trim();
   let clearanceTypeVal = '';
   clearanceRadios.forEach(r => { if (r.checked) clearanceTypeVal = r.value; });
-  const isSecurityEnq = securityEnquiry.checked;
-
+  const isSecurityEnq = securityEnquiry && securityEnquiry.checked;
   const payload = {
     firstName: firstNameRaw ? firstNameRaw.charAt(0).toUpperCase() + firstNameRaw.slice(1).toLowerCase() : '',
     lastName: lastNameRaw.toUpperCase(),
@@ -728,22 +725,20 @@ async function handleSubmit(event) {
     message: messageField.value.trim(),
     turnstileToken: turnstileToken,
   };
-
-  let progress = 0;
   const interval = setInterval(() => {
-    progress += 1; // progress tick
-    if (progress >= 90) {
+    progress += 100 / 30;
+    if (progress >= 100) {
       clearInterval(interval);
+      gtag_report_conversion();
+      personaliseThankYou(payload.firstName, isSecurityEnq, clearanceTypeVal);
       fetch(SUBMIT_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
       .then(r => r.json())
       .then(data => {
-        // done
         if (data.success) {
           gtagSendEvent();
-          personaliseThankYou(payload.firstName, isSecurityEnq, clearanceTypeVal);
           closeContactModal();
           thankYouModal.style.display = 'block';
-          setTimeout(() => { resetForm(); pbc.classList.remove('active'); }, 1000);
+          setTimeout(() => { resetForm(); pbc.classList.remove('active'); submitBtn.disabled = false; }, 1000);
         } else { throw new Error(data.message || 'Submission failed'); }
       })
       .catch(() => {
@@ -752,7 +747,7 @@ async function handleSubmit(event) {
         showToast('error', 'Submission <em>failed</em>', 'Sorry, there was a problem sending your message. Please try again or call 1300 027 423.');
       });
     }
-  }, 30);
+  }, 100);
 }
 
 function personaliseThankYou(firstName, isSec, ctv) {
