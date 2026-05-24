@@ -321,6 +321,8 @@ body {
 .form-input::placeholder, .form-textarea::placeholder { color: var(--muted); }
 .form-input:hover, .form-textarea:hover, .form-select:hover { border-color: var(--line-strong); }
 .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(201,168,76,0.12); background-color: var(--bg-2); }
+.form-input:-webkit-autofill, .form-input:-webkit-autofill:hover, .form-input:-webkit-autofill:focus, .form-input:-webkit-autofill:active, .form-textarea:-webkit-autofill, .form-select:-webkit-autofill { -webkit-box-shadow: 0 0 0 1000px var(--bg-2) inset !important; -webkit-text-fill-color: var(--text-strong) !important; caret-color: var(--text-strong); transition: background-color 9999s ease-in-out 0s; }
+.form-input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 1000px var(--bg-2) inset, 0 0 0 4px rgba(201,168,76,0.12) !important; border-color: var(--gold) !important; }
 .form-input.valid { border-color: var(--line); }
 .form-input.valid:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(201,168,76,0.12); }
 .form-input.invalid { border-color: var(--error-red); }
