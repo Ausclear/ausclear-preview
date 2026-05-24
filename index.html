@@ -291,8 +291,6 @@ body {
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--ivory);
-  transition: color 0.3s ease;
-  cursor: pointer;
   text-align: center;
   margin: 0;
   display: block;
@@ -305,7 +303,6 @@ body {
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
-.hero-title:hover { color: var(--gold-bright); }
 
 .hero-subtitle {
   font-size: 17px;
@@ -2054,96 +2051,23 @@ if (counter) {
   window.addEventListener('load', updateCount);
 }
 
-// CLEARANCE LEVEL SCRAMBLE (loops continuously)
-const phrases = ['Baseline', 'NV1*', 'NV2*'];
-const el = document.getElementById('clearance-text');
-const chars = '!<>-_\\/[]{}—=+*^?#________';
-let frame = 0;
-function randChar() { return chars[Math.floor(Math.random() * chars.length)]; }
-function scrambleTo(newText) {
-  if (!el) return;
-  el.classList.add('fade-out');
-  const oldText = el.textContent || '';
-  const length = Math.max(oldText.length, newText.length);
-  const queue = [];
-  for (let i = 0; i < length; i++) {
-    const from = oldText[i] || '', to = newText[i] || '';
-    const start = Math.floor(Math.random() * 20);
-    const end = start + Math.floor(Math.random() * 20) + 10;
-    queue.push({ from, to, start, end });
-  }
-  function update() {
-    let output = '', complete = 0;
-    for (let i = 0; i < queue.length; i++) {
-      const { from, to, start, end } = queue[i];
-      if (frame >= end) { complete++; output += to; }
-      else if (frame >= start) { output += randChar(); }
-      else { output += from; }
-    }
-    el.textContent = output;
-    if (complete === queue.length) {
-      el.classList.remove('fade-out'); el.classList.add('fade-in');
-      return;
-    } else { frame++; requestAnimationFrame(update); }
-  }
-  frame = 0;
-  requestAnimationFrame(update);
+// CLEARANCE LEVEL CROSS-FADE (stable, no layout shift)
+const clearancePhrases = ['Baseline', 'NV1*', 'NV2*'];
+const clearanceEl = document.getElementById('clearance-text');
+if (clearanceEl) {
+  let ci = 0;
+  setInterval(() => {
+    ci = (ci + 1) % clearancePhrases.length;
+    clearanceEl.classList.remove('fade-in');
+    clearanceEl.classList.add('fade-out');
+    setTimeout(() => {
+      clearanceEl.textContent = clearancePhrases[ci];
+      clearanceEl.classList.remove('fade-out');
+      clearanceEl.classList.add('fade-in');
+    }, 320);
+  }, 2400);
 }
-window.addEventListener('load', () => {
-  if (!el) return;
-  el.classList.add('fade-in');
-  let i = 0;
-  function next() {
-    scrambleTo(phrases[i % phrases.length]);
-    i++;
-    setTimeout(next, 1800);
-  }
-  next();
-});
-
-// HERO TITLE SCRAMBLE ON HOVER (preserves <em> structure)
-const heroTitle = document.querySelector('.hero-title');
-if (heroTitle) {
-  const originalHTML = heroTitle.innerHTML;
-  const originalText = heroTitle.textContent;
-  let isAnimating = false;
-  heroTitle.addEventListener('mouseenter', function() {
-    if (isAnimating) return;
-    isAnimating = true;
-    scrambleTitle(heroTitle, originalText, () => { heroTitle.innerHTML = originalHTML; isAnimating = false; });
-  });
-  heroTitle.addEventListener('touchstart', function() {
-    if (isAnimating) return;
-    isAnimating = true;
-    scrambleTitle(heroTitle, originalText, () => { heroTitle.innerHTML = originalHTML; isAnimating = false; });
-  });
-}
-
-function scrambleTitle(element, finalText, callback) {
-  const chars = '!<>-_\\/[]{}—=+*^?#________';
-  const rc = () => chars[Math.floor(Math.random() * chars.length)];
-  let f = 0;
-  const queue = [];
-  for (let i = 0; i < finalText.length; i++) {
-    const start = Math.floor(Math.random() * 15);
-    const end = start + Math.floor(Math.random() * 15) + 8;
-    queue.push({ to: finalText[i], start, end });
-  }
-  function update() {
-    let output = '', complete = 0;
-    for (let i = 0; i < queue.length; i++) {
-      const { to, start, end } = queue[i];
-      if (f >= end) { output += to; complete++; }
-      else if (f >= start) { output += to === ' ' ? ' ' : rc(); }
-      else { output += to === ' ' ? ' ' : to; }
-    }
-    element.textContent = output;
-    if (complete === queue.length) { if (callback) callback(); return; }
-    f++;
-    requestAnimationFrame(update);
-  }
-  update();
-}
+// Hero title scramble removed - was causing layout shake on hover/touch
 </script>
 
 <!-- Zoho Analytics (Do Not Remove) -->
