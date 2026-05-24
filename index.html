@@ -229,12 +229,17 @@ body {
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-/* ===== HERO with blueprint SVG grid pattern (gold) ===== */
+/* ===== HERO ===== */
 .hero {
   padding: 150px 0 80px;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(201,168,76,0.22) 0%, transparent 55%),
+    /* Gold glow on top */
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(201,168,76,0.18) 0%, transparent 55%),
     radial-gradient(ellipse 60% 50% at 90% 100%, rgba(201,168,76,0.08) 0%, transparent 50%),
+    /* Heavier dark gradient so the photo recedes into the background */
+    linear-gradient(180deg, rgba(7,7,10,0.82) 0%, rgba(13,13,18,0.94) 100%),
+    /* Adelaide skyline photograph (atmospheric, behind text) */
+    url('https://images.unsplash.com/photo-1702252212983-db7e428cc3cf?w=1920&q=85&auto=format&fit=crop') center/cover no-repeat,
     linear-gradient(180deg, #07070a 0%, #0d0d12 100%);
   color: var(--ivory);
   position: relative;
