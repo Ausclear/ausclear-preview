@@ -1066,21 +1066,16 @@ ul.content-list li::before {
   color: var(--gold-soft);
 }
 
-/* Spinner (replaces fake progress bar) */
+/* Spinner (inline, centred below message field) */
 .progress-container {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(7,7,10,0.85);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  z-index: 10005;
+  width: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
-  margin: 0;
-  padding: 0;
+  gap: 14px;
+  margin: 24px 0 4px;
+  padding: 18px 0;
 }
 .progress-container.active { display: flex; }
 .progress-spinner {
