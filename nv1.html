@@ -225,7 +225,10 @@ body {
 .page-hero {
   position: relative;
   padding: 100px 0 90px;
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, rgba(7,7,10,0.55) 0%, rgba(7,7,10,0.85) 70%, #0d0d12 100%),
+    url('https://images.unsplash.com/photo-1510546020578-a35ae9fcfb0f?w=1920&q=85&auto=format&fit=crop') center/cover no-repeat,
+    var(--bg);
   color: var(--ivory);
   overflow: hidden;
   isolation: isolate;
@@ -237,10 +240,12 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(201,168,76,0.22) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 50% at 90% 100%, rgba(201,168,76,0.08) 0%, transparent 50%),
-    linear-gradient(180deg, #07070a 0%, #0d0d12 100%);
-  z-index: -2;
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(201,168,76,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 50% at 90% 100%, rgba(201,168,76,0.10) 0%, transparent 50%);
+  z-index: -1;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 100% 90% at 50% 50%, #000 50%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 90% at 50% 50%, #000 50%, transparent 95%);
 }
 
 /* .page-hero::after wireframe overlay removed - too large for HTML viewer */
