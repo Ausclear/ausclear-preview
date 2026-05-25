@@ -2250,7 +2250,7 @@ function handleSubmit(event) {
       email: (emailInput.value || '').trim(),
       mobile: (mobileInput.value || '').replace(/\D/g, ''),
       enquiryType: isSecurityEnquiry ? 'Security Clearance' : 'General',
-      clearanceType: isSecurityEnquiry ? clearanceTypeValue : 'Baseline Clearance',
+      clearanceType: isSecurityEnquiry ? clearanceTypeValue : '',
       state: stateEl ? stateEl.value : '',
       leadSource: leadSourceEl ? leadSourceEl.value : '',
       message: messageField ? (messageField.value || '').trim() : '',
