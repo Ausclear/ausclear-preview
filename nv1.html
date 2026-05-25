@@ -2423,5 +2423,136 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 </script>
 
+
+<!-- Custom dark dropdown - replaces native picker overlay -->
+<style>
+.custom-select-wrap { position: relative; width: 100%; }
+.custom-select-wrap select.form-select { position: absolute; opacity: 0; pointer-events: none; height: 0; width: 0; border: 0; padding: 0; margin: 0; }
+.custom-select-button {
+  width: 100%; padding: 11px 44px 11px 14px;
+  border: 1px solid var(--line); border-radius: var(--border-radius);
+  background: var(--bg-2); color: var(--text-strong);
+  font-size: 15px; font-family: var(--sans);
+  text-align: left; cursor: pointer; outline: none;
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 44px; transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.custom-select-button::after {
+  content: '';
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  width: 16px; height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23c9a84c' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-size: contain;
+  transition: transform 0.2s;
+}
+.custom-select-wrap.open .custom-select-button::after { transform: translateY(-50%) rotate(180deg); }
+.custom-select-button:hover { border-color: var(--line-strong); }
+.custom-select-wrap.open .custom-select-button,
+.custom-select-button:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(201,168,76,0.12); }
+.custom-select-button.placeholder { color: var(--muted); }
+.custom-select-menu {
+  position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+  background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+  border: 1px solid var(--line-strong); border-radius: var(--border-radius);
+  box-shadow: 0 18px 40px -12px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.04);
+  max-height: 260px; overflow-y: auto;
+  z-index: 1000; display: none;
+  padding: 4px 0;
+}
+.custom-select-wrap.open .custom-select-menu { display: block; }
+.custom-select-option {
+  padding: 11px 16px; color: var(--text); cursor: pointer; font-size: 15px;
+  transition: background 0.15s, color 0.15s;
+  border-left: 2px solid transparent;
+}
+.custom-select-option:hover, .custom-select-option.highlighted { background: rgba(201,168,76,0.08); color: var(--text-strong); border-left-color: var(--gold); }
+.custom-select-option.selected { background: rgba(201,168,76,0.12); color: var(--gold-soft); font-weight: 500; border-left-color: var(--gold); }
+.custom-select-option.placeholder { color: var(--muted); font-style: italic; }
+/* Scrollbar styling for menu */
+.custom-select-menu::-webkit-scrollbar { width: 6px; }
+.custom-select-menu::-webkit-scrollbar-track { background: var(--bg-2); }
+.custom-select-menu::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+.custom-select-menu::-webkit-scrollbar-thumb:hover { background: var(--gold-deep); }
+</style>
+<script>
+(function(){
+  function buildCustomSelect(sel) {
+    if (sel.dataset.customised === '1') return;
+    sel.dataset.customised = '1';
+    var wrap = document.createElement('div');
+    wrap.className = 'custom-select-wrap';
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(sel);
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'custom-select-button';
+    btn.setAttribute('aria-haspopup', 'listbox');
+    btn.setAttribute('aria-expanded', 'false');
+    wrap.appendChild(btn);
+    var menu = document.createElement('div');
+    menu.className = 'custom-select-menu';
+    menu.setAttribute('role', 'listbox');
+    wrap.appendChild(menu);
+
+    function render() {
+      menu.innerHTML = '';
+      var selectedOpt = sel.options[sel.selectedIndex];
+      btn.textContent = selectedOpt ? selectedOpt.textContent : '';
+      btn.classList.toggle('placeholder', !selectedOpt || !selectedOpt.value);
+      Array.prototype.forEach.call(sel.options, function(opt, i){
+        var item = document.createElement('div');
+        item.className = 'custom-select-option';
+        if (!opt.value) item.classList.add('placeholder');
+        if (i === sel.selectedIndex) item.classList.add('selected');
+        item.setAttribute('role', 'option');
+        item.dataset.idx = i;
+        item.textContent = opt.textContent;
+        item.addEventListener('click', function(){
+          sel.selectedIndex = i;
+          sel.dispatchEvent(new Event('change', { bubbles: true }));
+          close();
+          render();
+        });
+        menu.appendChild(item);
+      });
+    }
+    function open() {
+      // Close any other open dropdowns first
+      document.querySelectorAll('.custom-select-wrap.open').forEach(function(o){ if (o !== wrap) o.classList.remove('open'); });
+      wrap.classList.add('open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      wrap.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+    function toggle(){ wrap.classList.contains('open') ? close() : open(); }
+
+    btn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); toggle(); });
+    // Keyboard support
+    btn.addEventListener('keydown', function(e){
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); open(); }
+      else if (e.key === 'Escape') close();
+    });
+    // External listener: re-render if select changes via JS
+    sel.addEventListener('change', render);
+    render();
+  }
+
+  function init() {
+    document.querySelectorAll('select.form-select').forEach(buildCustomSelect);
+    // Close on outside click
+    document.addEventListener('click', function(e){
+      if (!e.target.closest('.custom-select-wrap')) {
+        document.querySelectorAll('.custom-select-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+      }
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
 </body>
 </html>
