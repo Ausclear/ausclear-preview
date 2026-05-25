@@ -516,7 +516,6 @@ body {
 
 @media (max-width: 1024px) {
   .container { padding: 0 24px; }
-  .contact-info-section { grid-template-columns: 1fr; gap: 56px; }
   .form-section { position: static; }
   .contact-methods { gap: 18px; }
   .contact-card { padding: 28px 22px; min-height: 220px; }
@@ -528,6 +527,10 @@ body {
 @media (max-width: 900px) {
   .contact-methods { grid-template-columns: 1fr 1fr; }
   .contact-methods .contact-card:nth-child(3) { grid-column: 1 / -1; }
+}
+
+@media (max-width: 860px) {
+  .contact-info-section { grid-template-columns: 1fr; gap: 48px; }
 }
 
 @media (max-width: 768px) {
