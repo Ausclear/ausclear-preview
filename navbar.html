@@ -362,45 +362,31 @@
   /* === Mobile === */
   @media (max-width: 768px) {
     .nav-container {
-      height: auto;
-      padding: 14px 20px;
+      height: 64px;
+      padding: 0 18px;
       gap: 12px;
+      justify-content: space-between;
     }
 
     .nav-logo {
-      gap: 10px;
-      flex: 1;
-      max-width: calc(100% - 60px);
+      flex: 0 1 auto;
     }
 
-    .nav-logo img { height: 44px; }
-
-    .brand-line {
-      font-size: 17px;
-      white-space: normal;
-      max-width: 210px;
-      line-height: 1.2;
-    }
-
-    .brand-sub {
-      font-size: 10px;
-      white-space: normal;
-      max-width: 210px;
-    }
+    .nav-logo img { height: 38px; }
 
     .mobile-toggle { display: flex; }
 
     .nav-menu {
       position: fixed;
-      top: 72px;
+      top: 64px;
       left: 0;
       right: 0;
       background: linear-gradient(180deg, var(--nav-bg) 0%, var(--nav-bg-2) 100%);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
       flex-direction: column;
-      padding: 18px;
-      gap: 4px;
+      padding: 12px;
+      gap: 6px;
       opacity: 0;
       visibility: hidden;
       transform: translateY(-12px);
@@ -410,7 +396,7 @@
       overflow-y: auto;
       overflow-x: hidden;
       align-items: stretch;
-      max-height: calc(100vh - 72px);
+      max-height: calc(100vh - 64px);
       z-index: 10000;
     }
 
@@ -422,46 +408,30 @@
 
     .nav-item { width: 100%; }
 
+    /* Top-level items stay as Option C buttons on mobile too */
     .nav-link {
       width: 100%;
-      padding: 14px 18px;
-      justify-content: flex-start;
-      background: transparent;
-      min-height: 48px;
-      font-size: 15px;
-      border-radius: 10px;
-      transition: color 0.25s ease, background 0.25s ease;
+      padding: 12px 16px;
+      justify-content: space-between;
+      font-size: 14px;
+      min-height: 0;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #1a1a22, #14141a);
+      border: 1px solid rgba(201,168,76,0.12);
+      color: var(--nav-text);
     }
 
     .nav-link::after { display: none; }
+    .nav-link::before { display: none; }
 
-    .nav-link::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 0;
-      background: var(--nav-gold);
-      border-radius: 2px;
-      transition: height 0.3s ease;
-    }
-
-    .nav-link:hover {
-      background: rgba(201,168,76,0.06);
-      color: var(--nav-gold-bright);
-    }
-
-    .nav-link:hover::before { height: 60%; }
-
-    .nav-link.active::before { height: 60%; }
+    .nav-link:hover,
     .nav-link.active {
-      color: var(--nav-gold);
-      background: rgba(201,168,76,0.08);
+      color: var(--nav-gold-soft);
+      border-color: rgba(201,168,76,0.5);
+      background: linear-gradient(180deg, #20202a, #1a1a22);
     }
 
-    /* Mobile dropdown */
+    /* Mobile dropdown - nested compact rows */
     .has-dropdown::after { display: none; }
 
     .dropdown-menu {
@@ -480,7 +450,8 @@
       max-width: 100%;
       z-index: 10000;
       pointer-events: auto;
-      border-radius: 10px;
+      border-radius: 8px;
+      border: none;
     }
 
     .dropdown-menu::before,
@@ -488,25 +459,28 @@
 
     .has-dropdown.mobile-open .dropdown-menu {
       max-height: 500px;
-      padding: 8px;
-      margin-top: 6px;
+      padding: 4px;
+      margin-top: 4px;
     }
 
     .has-dropdown.mobile-open .dropdown-arrow { transform: rotate(180deg); }
 
     .dropdown-item {
-      padding: 10px 16px 10px 22px;
+      padding: 10px 14px;
       min-height: 0;
       width: 100%;
-      font-size: 14px;
+      font-size: 13px;
       background: transparent;
-      margin-bottom: 0;
+      margin: 0;
       border-radius: 6px;
+      border-left: 2px solid transparent;
     }
 
-    .dropdown-item:hover {
+    .dropdown-item:hover,
+    .dropdown-item:active {
       color: var(--nav-gold-bright);
       background: rgba(201,168,76,0.08);
+      border-left-color: var(--nav-gold);
     }
   }
 
