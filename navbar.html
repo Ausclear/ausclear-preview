@@ -473,14 +473,14 @@
     .has-dropdown.mobile-open .dropdown-arrow { transform: rotate(180deg); }
 
     .dropdown-item {
-      padding: 9px 12px;
+      padding: 9px 12px 9px 14px;
       min-height: 0;
       width: 100%;
       font-size: 13px;
       background: transparent;
       margin: 0;
       border-radius: 6px;
-      border: none;
+      border-left: 2px solid transparent;
       box-sizing: border-box;
     }
 
@@ -493,6 +493,7 @@
     .dropdown-item.active {
       color: var(--nav-gold-bright);
       background: rgba(201,168,76,0.08);
+      border-left-color: var(--nav-gold);
     }
   }
 
