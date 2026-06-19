@@ -229,15 +229,23 @@
 
   .nav-link:hover {
     color: var(--nav-ivory);
-    border-color: rgba(201,168,76,0.35);
+    border-color: rgba(201,168,76,0.85);
     background: linear-gradient(180deg, #20202a, #1a1a22);
     transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.05),
+      0 0 0 1px rgba(201,168,76,0.25),
+      0 4px 14px rgba(201,168,76,0.18);
   }
 
   .nav-link.active {
     color: var(--nav-gold-soft);
-    border-color: rgba(201,168,76,0.5);
+    border-color: var(--nav-gold);
     background: linear-gradient(180deg, #20202a, #1a1a22);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      0 0 0 1px rgba(201,168,76,0.4),
+      0 0 12px rgba(201,168,76,0.25);
   }
 
   .nav-link.active::after {
